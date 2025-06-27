@@ -3,5 +3,5 @@ from tasks.views import show_task,show_specific
 
 urlpatterns = [
     path('show-task/',show_task),
-    path('show-task/<int: id>', show_specific)
+    path('show-task/<int: id>/', show_specific)
 ]
