@@ -2,16 +2,8 @@ from django.http import HttpResponse
 from django.shortcuts import render
 
 # Create your views here.
-def home(request):
-        return HttpResponse("Welcome to the task management System")
+def manager_dashboard(request):
+    return render(request, "dashboard/manager_dashboard.html")
 
-def contact(request):
-    return HttpResponse("This is Contact Page")
-
-def show_task(request):
-    return HttpResponse("This is our task page")
-
-def show_specific(request, id):
-    return HttpResponse(f"This is specific id {id}")
-
-    
+def user_dashboard(request):
+    return render(request, "dashboard/user-dashboard.html")
