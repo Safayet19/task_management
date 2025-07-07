@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="{% static "CSS/style.css" %}">
 </head>
 <body>
-    <h1 class= "lal-bg">This is Lal Background</h1>
+    <h1 class="lal-bg">This is Lal Background</h1>
+    {% for name in names %}
+    <li>{{ name }} {{ age }}</li>
+{% endfor %}
+
 </body>
+
 </html>
