@@ -3,26 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Task List</title>
 </head>
 <body>
     <div>
-        <ul>
+        {% comment %} <ul>
             {% for task in tasks %}
                 <li>
-                    {{task}}
+                    <p>
+                        <strong>{{ task.title }}</strong><br>
+                        Priority: {{ task.taskdetail.priority }}<br>
+                        Notes: {{ task.taskdetail.notes }}<br>
+                        Assigned To: {{ task.taskdetail.assigned_to }}
+                    </p>
                 </li>
+            {% empty %}
+                <li>No tasks found.</li>
             {% endfor %}
-        </ul>
+        </ul> {% endcomment %}
+        
+        <p>Total Tasks: {{asks}}</p>
     </div>
-
-    <div>
-        {{task3}}
-    </div>
-
-    <p>
-       {{ first_task}}
-    </p>
-    
 </body>
 </html>

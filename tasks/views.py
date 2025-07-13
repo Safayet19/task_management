@@ -2,7 +2,9 @@ from django.http import HttpResponse
 from django.shortcuts import render
 
 from tasks.forms import TaskForm, TaskModelForm
-from tasks.models import Employee,Task
+from tasks.models import *
+from datetime import date
+from django.db.models import Q, Count
 
 
 # Create your views here.
@@ -64,13 +66,31 @@ def create_task(request):
     return render(request, "task_form.html", context)
 
 def view_task(request):
-    #retrieve all data from task model
-    tasks = Task.objects.all()
-    
-    #retrive a specific task
-    task_3 = Task.objects.get(id = 1)
-    
-    #fetch the first task
-    first_task = Task.objects.first()
-    return render(request, 'show_task.html', {'tasks' : tasks, 'task3':task_3, 'first_task': first_task})
-    
+   #filter data of pending task
+   #pending_tasks = Task.objects.filter(status = "PENDING")
+   
+   #show task of due_date today
+   #tasks = Task.objects.filter(due_date = date.today())
+   
+   """ Show The Task Whose Priority is not LOW"""
+   #tasks = TaskDetail.objects.exclude(priority = 'L')
+   
+   """ Show The Task contain word paper .. ',' mane and. Q mane OR """
+   #tasks = Task.objects.filter(Q(title__icontains = 'c') | Q(status = 'PENDING'))
+   
+   """ select related query (Foreign Key, OneToOneField)"""
+   #tasks = Task.objects.all() # eta dile onkbar query chole.Optimized hoyna. 21bar query chole.. tai select related query use
+   # tasks = Task.objects.select_related('taskdetail').all()
+   
+   """ Foreign key er upor select_related query """
+   #asks = Task.objects.select_related('project').all()
+   
+   """ prefetch_related (reverse ForeignKey , manytomany )"""
+   #tasks = Project.objects.prefetch_related('task_set').all()
+   
+   """Count how many TaskDetail records each Task has (annotate)"""
+  #tasks = Task.objects.annotate(detail_count=Count('taskdetail'))
+  
+   """ Aggregation """
+   tasks = Task.objects.aggregate(total=Count('id'))
+   return render(request, "show_task.html", {'tasks' : tasks})
