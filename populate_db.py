@@ -1,58 +1,70 @@
 import os
 import django
-from faker import Faker
+import uuid
 import random
-from tasks.models import Employee, Project, Task, TaskDetail
+from faker import Faker
 
-# Set up Django environment
+# ✅ Set up Django environment before importing models
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'task_management.settings')
 django.setup()
 
-# Function to populate the database
-
+# ✅ Import models AFTER setting up Django
+from tasks.models import Employee, Project, Task, TaskDetail
 
 def populate_db():
-    # Initialize Faker
     fake = Faker()
 
     # Create Projects
-    projects = [Project.objects.create(
-        name=fake.bs().capitalize(),
-        description=fake.paragraph(),
-        start_date=fake.date_this_year()
-    ) for _ in range(5)]
-    print(f"Created {len(projects)} projects.")
+    projects = []
+    for _ in range(5):
+        project = Project.objects.create(
+            name=fake.bs().capitalize(),
+            description=fake.paragraph(),
+            start_date=fake.date_this_year()
+        )
+        projects.append(project)
+    print(f"✅ Created {len(projects)} projects.")
 
     # Create Employees
-    employees = [Employee.objects.create(
-        name=fake.name(),
-        email=fake.email()
-    ) for _ in range(10)]
-    print(f"Created {len(employees)} employees.")
+    employees = []
+    for _ in range(10):
+        employee = Employee.objects.create(
+            name=fake.name(),
+            email=fake.unique.email()
+        )
+        employees.append(employee)
+    print(f"✅ Created {len(employees)} employees.")
 
-    # Create Tasks
+    # Create Tasks and assign Employees
     tasks = []
-    for _ in range(20):
+    for _ in range(50):
         task = Task.objects.create(
             project=random.choice(projects),
-            title=fake.sentence(),
+            title=fake.sentence(nb_words=6),
             description=fake.paragraph(),
             due_date=fake.date_this_year(),
             status=random.choice(['PENDING', 'IN_PROGRESS', 'COMPLETED']),
             is_completed=random.choice([True, False])
         )
-        task.assigned_to.set(random.sample(employees, random.randint(1, 3)))
+        assigned_emps = random.sample(employees, random.randint(1, 3))
+        task.assigned_to.set(assigned_emps)
+        task.save()
         tasks.append(task)
-    print(f"Created {len(tasks)} tasks.")
+    print(f"✅ Created {len(tasks)} tasks.")
 
-    # Create Task Details
+    # Create TaskDetails with unique std_id
     for task in tasks:
+        assigned_names = ", ".join([emp.name for emp in task.assigned_to.all()])
         TaskDetail.objects.create(
+            std_id=str(uuid.uuid4()),
             task=task,
-            assigned_to=", ".join(
-                [emp.name for emp in task.assigned_to.all()]),
+            assigned_to=assigned_names,
             priority=random.choice(['H', 'M', 'L']),
             notes=fake.paragraph()
         )
-    print("Populated TaskDetails for all tasks.")
-    print("Database populated successfully!")
+    print("✅ Populated TaskDetails for all tasks.")
+    print("🎉 Database populated successfully!")
+
+# ✅ Run if this script is executed directly
+if __name__ == "__main__":
+    populate_db()

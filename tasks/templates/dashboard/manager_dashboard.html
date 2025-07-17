@@ -12,83 +12,31 @@
           <div>CREATED AT</div>
         </div>
 
+        {% for task in tasks %}
         <section class="divide-y divide-gray-600">
-        <div class="grid grid-cols-4 p-4 gap-4 items-center ">
-          <div class="flex items-center gap-2">
-            <div class="bg-green-500 h-2 w-2 rounded-full"></div>
-            <span>Test Low Task</span>
-          </div>
-          <div>
-            <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm">Low</span>
-          </div>
-          <div class="flex -space-x-2">
-            <span class="bg-blue-500 rounded-full text-white h-8 w-8 flex items-center justify-center text-sm border-2 border-white">CA</span>
-            <span class="bg-blue-500 rounded-full text-white h-8 w-8 flex items-center justify-center text-sm border-2 border-white">CA</span>
-            <span class="bg-blue-500 rounded-full text-white h-8 w-8 flex items-center justify-center text-sm border-2 border-white">CA</span>
-          </div>
-          <div class="text-gray-500">
-            <span>9 months ago</span>
-          </div>
-        </div>
-      </section>
-      
-      <section class="divide-y divide-gray-600">
-        <div class="grid grid-cols-4 p-4 gap-4 items-center ">
-          <div class="flex items-center gap-2">
-            <div class="bg-green-500 h-2 w-2 rounded-full"></div>
-            <span>Test Low Task</span>
-          </div>
-          <div>
-            <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm">Low</span>
-          </div>
-          <div class="flex -space-x-2">
-            <span class="bg-blue-500 rounded-full text-white h-8 w-8 flex items-center justify-center text-sm border-2 border-white">CA</span>
-            <span class="bg-blue-500 rounded-full text-white h-8 w-8 flex items-center justify-center text-sm border-2 border-white">CA</span>
-            <span class="bg-blue-500 rounded-full text-white h-8 w-8 flex items-center justify-center text-sm border-2 border-white">CA</span>
-          </div>
-          <div class="text-gray-500">
-            <span>9 months ago</span>
-          </div>
-        </div>
-      </section>
-      <section class="divide-y divide-gray-600">
-        <div class="grid grid-cols-4 p-4 gap-4 items-center ">
-          <div class="flex items-center gap-2">
-            <div class="bg-green-500 h-2 w-2 rounded-full"></div>
-            <span>Test Low Task</span>
-          </div>
-          <div>
-            <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm">Low</span>
-          </div>
-          <div class="flex -space-x-2">
-            <span class="bg-blue-500 rounded-full text-white h-8 w-8 flex items-center justify-center text-sm border-2 border-white">CA</span>
-            <span class="bg-blue-500 rounded-full text-white h-8 w-8 flex items-center justify-center text-sm border-2 border-white">CA</span>
-            <span class="bg-blue-500 rounded-full text-white h-8 w-8 flex items-center justify-center text-sm border-2 border-white">CA</span>
-          </div>
-          <div class="text-gray-500">
-            <span>9 months ago</span>
-          </div>
-        </div>
-      </section>
+          <div class="grid grid-cols-4 p-4 gap-4 items-center ">
+            <div class="flex items-center gap-2">
+              <div class="bg-green-500 h-2 w-2 rounded-full"></div>
+              <span>{{ task.title }}</span>
+            </div>
+            <div>
+              <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm">{{ task.taskdetail.get_priority_display }}</span>
+            </div>
 
-      <section class="divide-y divide-gray-600">
-        <div class="grid grid-cols-4 p-4 gap-4 items-center ">
-          <div class="flex items-center gap-2">
-            <div class="bg-green-500 h-2 w-2 rounded-full"></div>
-            <span>Test Low Task</span>
+            <div class="flex -space-x-2">
+              {% for emp in task.assigned_to.all %}
+              <span class="bg-blue-500 rounded-full text-white h-8 w-8 flex items-center justify-center text-sm border-2 border-white">
+                {{ emp.name|slice:':2'}}
+              </span>
+              {% endfor %}
+            </div>
+
+            <div class="text-gray-500">
+              <span>{{ task.created_at|timesince }} ago</span>
+            </div>
           </div>
-          <div>
-            <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm">Low</span>
-          </div>
-          <div class="flex -space-x-2">
-            <span class="bg-blue-500 rounded-full text-white h-8 w-8 flex items-center justify-center text-sm border-2 border-white">CA</span>
-            <span class="bg-blue-500 rounded-full text-white h-8 w-8 flex items-center justify-center text-sm border-2 border-white">CA</span>
-            <span class="bg-blue-500 rounded-full text-white h-8 w-8 flex items-center justify-center text-sm border-2 border-white">CA</span>
-          </div>
-          <div class="text-gray-500">
-            <span>9 months ago</span>
-          </div>
-        </div>
-      </section>
+        </section>
+
+        {% endfor %}
       </div>
 {% endblock tasks %}
