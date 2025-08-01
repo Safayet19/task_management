@@ -1,42 +1,120 @@
 {% extends "dashboard/dashboard.html" %}
-{% comment %} inherit from Dashboard {% endcomment %}
+{% block title %}Manager Dashboard{% endblock title %}
 
-{% block title %}Manager Dashboard{% endblock title %}Manager Dashboard
 {% block tasks %}
- <!----------- TASK TABLE------------>
-      <div class="bg-white rounded xl shadow-sm mt-8 overflow-x-auto">
-        <div class="grid grid-cols-4 p-4 border-b border-gray-100 text-sm text-gray-500">
-          <div>TASK TITLE</div>
-          <div>PRIORITY</div>
-          <div>TEAM</div>
-          <div>CREATED AT</div>
-        </div>
+<!-- Messages -->
+{% if messages %}
+  <div class="fixed top-4 right-4 z-50">
+    {% for message in messages %}
+      <div
+        class="mb-2 px-4 py-2 rounded shadow
+          {% if message.tags == 'success' %} bg-green-500 text-white
+          {% elif message.tags == 'error' %} bg-red-500 text-white
+          {% else %} bg-gray-300 text-black
+          {% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
 
-        {% for task in tasks %}
-        <section class="divide-y divide-gray-600">
-          <div class="grid grid-cols-4 p-4 gap-4 items-center ">
-            <div class="flex items-center gap-2">
-              <div class="bg-green-500 h-2 w-2 rounded-full"></div>
-              <span>{{ task.title }}</span>
-            </div>
-            <div>
-              <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm">{{ task.taskdetail.get_priority_display }}</span>
-            </div>
+<div class="bg-white rounded-xl shadow-sm mt-8 overflow-x-auto">
+  <!-- Header Row -->
+  <div class="grid grid-cols-5 p-4 border-b border-gray-100 text-sm text-gray-500 uppercase tracking-wide font-semibold">
+    <div>TASK TITLE</div>
+    <div>PRIORITY</div>
+    <div>TEAM</div>
+    <div>CREATED AT</div>
+    <div>ACTIONS</div>
+  </div>
 
-            <div class="flex -space-x-2">
-              {% for emp in task.assigned_to.all %}
-              <span class="bg-blue-500 rounded-full text-white h-8 w-8 flex items-center justify-center text-sm border-2 border-white">
-                {{ emp.name|slice:':2'}}
-              </span>
-              {% endfor %}
-            </div>
+  <!-- Task List -->
+  {% for task in tasks %}
+  <section class="divide-y divide-gray-200">
+    <div class="grid grid-cols-5 p-4 gap-4 items-center">
+      
+      <!-- Task Title & Status -->
+      <div class="flex items-center gap-3">
+        <!-- Status Dot -->
+        <div class="rounded-full h-3 w-3 flex-shrink-0 self-center
+          {% if task.status == 'COMPLETED' %} bg-green-500
+          {% elif task.status == 'IN_PROGRESS' %} bg-yellow-500
+          {% elif task.status == 'PENDING' %} bg-red-500
+          {% else %} bg-gray-400
+          {% endif %}"></div>
 
-            <div class="text-gray-500">
-              <span>{{ task.created_at|timesince }} ago</span>
-            </div>
-          </div>
-        </section>
+        <span class="font-medium text-gray-900">{{ task.title }}</span>
 
+        <!-- Status Badge -->
+        <span class="px-2 py-1 rounded-full text-sm font-semibold
+          {% if task.status == 'COMPLETED' %} bg-green-100 text-green-800
+          {% elif task.status == 'IN_PROGRESS' %} bg-yellow-100 text-yellow-800
+          {% elif task.status == 'PENDING' %} bg-red-100 text-red-800
+          {% else %} bg-gray-100 text-gray-800
+          {% endif %}">
+          {{ task.status }}
+        </span>
+      </div>
+
+      <!-- Priority Badge -->
+      <div>
+        <span class="px-3 py-1 rounded-full text-sm font-semibold
+          {% if task.taskdetail.priority == 'H' %} bg-pink-200 text-pink-800
+          {% elif task.taskdetail.priority == 'M' %} bg-cyan-200 text-cyan-800
+          {% elif task.taskdetail.priority == 'L' %} bg-orange-200 text-orange-800
+          {% else %} bg-gray-200 text-gray-800
+          {% endif %}">
+          {{ task.taskdetail.get_priority_display }}
+        </span>
+      </div>
+
+      <!-- Team Members -->
+      <div class="flex -space-x-2">
+        {% for emp in task.assigned_to.all %}
+        <span class="bg-blue-600 rounded-full text-white h-8 w-8 flex items-center justify-center text-sm border-2 border-white" title="{{ emp.name }}">
+          {{ emp.name|slice:":2"|upper }}
+        </span>
         {% endfor %}
       </div>
+
+      <!-- Created Time -->
+      <div class="text-gray-500 text-sm italic">
+        <span>{{ task.created_at|timesince }} ago</span>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex gap-2">
+
+        <!-- Edit Button -->
+        <a href="{% url 'update-task' task.id %}"
+           class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded shadow-sm transition">
+          <!-- Pencil Icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M15.232 5.232l3.536 3.536M16 3a2 2 0 012 2v3.586a1 1 0 01-.293.707L7 20.414 3 21l.586-4L16.293 3.707A1 1 0 0117 3h-1z" />
+          </svg>
+          Edit
+        </a>
+
+        <!-- Delete Button -->
+        <a href="{% url 'delete-task' task.id %}"
+           onclick="return confirm('Are you sure you want to delete this task?');"
+           class="inline-flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded shadow-sm transition">
+          <!-- Trash Icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4m-4 0a1 1 0 011-1h2a1 1 0 011 1m-4 0h4" />
+          </svg>
+          Delete
+        </a>
+
+      </div>
+    </div>
+  </section>
+  {% empty %}
+  <p class="p-4 text-center text-gray-500">No tasks found.</p>
+  {% endfor %}
+</div>
 {% endblock tasks %}

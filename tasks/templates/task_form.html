@@ -16,14 +16,21 @@
         <h1 class="text-2xl font-bold mb-6 text-center text-blue-600">Create New Task</h1>
 
         <!-- Show message if available -->
-        <div> 
-            {% if message %}
-                <p class="text-green-700 bg-green-100 p-3 rounded mb-4">{{ message }}</p>
+        <div>
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="text-green-700 bg-green-100 p-3 rounded mb-4 {% if message.tags == 'success' %}border border-green-600{% endif %}">
+                        {{ message }}
+                    </p>
+                {% endfor %}
             {% endif %}
         </div>
 
+
         <form method="POST"> 
             {% csrf_token %}
+            {{task_form}}
+            {{task_detail_form}}
             
             <!-- Render form fields as paragraphs -->
             {{ form.as_p }}
