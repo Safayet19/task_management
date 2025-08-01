@@ -22,7 +22,7 @@ class Task(models.Model):
                                 default=1)
     
     # ------Many to Many Relationship-------------
-    assigned_to = models.ManyToManyField(Employee)
+    assigned_to = models.ManyToManyField(Employee, related_name='tasks')
     
     title = models.CharField(max_length=250)
     description = models.TextField()
@@ -47,7 +47,7 @@ class TaskDetail(models.Model):
     std_id = models.CharField(max_length=200,primary_key=True)
     # Making Relation
     task = models.OneToOneField(Task, on_delete=models.CASCADE)
-    assigned_to = models.CharField(max_length=100)
+    # assigned_to = models.CharField(max_length=100)
     priority = models.CharField(max_length=1, choices=PRIORITY_OPTIONS, default=LOW)
     notes = models.TextField(blank=True, null=True)
     
